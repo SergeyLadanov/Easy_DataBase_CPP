@@ -13,7 +13,7 @@
 ######################################
 # target
 ######################################
-TARGET = MakeTemplate
+TARGET = Easy_DataBase
 
 
 ######################################
@@ -45,12 +45,13 @@ CPP_FILE_EXTENSION = .cpp
 
 # C sources
 C_SOURCES =  \
-C_Code_Folder/Src/file1.c
+
 
 # CPP sources
 CPP_SOURCES = \
 Core/Src/main.cpp  \
-CPP_Code_Folder/Src/file2.cpp
+Easy_DataBase/Src/easy_db.cpp \
+Easy_DataBase/Src/easy_db_cell.cpp
 
 
 
@@ -94,8 +95,7 @@ AS_INCLUDES =
 # C includes
 C_CPP_INCLUDES =  \
 -I Core/Inc  \
--I C_Code_Folder/Inc  \
--I CPP_Code_Folder/Inc
+-I Easy_DataBase/Inc
 
 
 # compile gcc flags
