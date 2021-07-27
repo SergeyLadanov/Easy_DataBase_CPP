@@ -5,6 +5,21 @@
 #include "easy_db_string.hpp"
 #include "easy_db_datetime.hpp"
 
+// Типы значений
+typedef enum {
+	EDB_FLOAT = 1,
+	EDB_UINT64,
+	EDB_UINT32,
+	EDB_UINT16,
+	EDB_UINT8,
+	EDB_BOOL,
+	EDB_STRING,
+	EDB_DOUBLE,
+	EDB_DATE_TIME
+}EDB_DataType;
+
+
+// Класс ячейки с данными
 class Easy_DB_Cell
 {    
 public:
@@ -23,10 +38,67 @@ public:
         int32_t I32;
         int16_t I16;
         int8_t I8;
-
+        bool BoolVal;
     }Value;
 
+    // Размер значения в байтах
+    uint32_t GetSize(void)
+    {
+        switch(Type)
+        {
+            case EDB_FLOAT :
+                return sizeof(Value.F32);
+            break;
 
+            case EDB_UINT64 :
+                return sizeof(Value.UI64);
+            break;
+
+            case EDB_UINT32 :
+                return sizeof(Value.UI32);
+            break;
+
+            case EDB_UINT16 :
+                return sizeof(Value.UI16);
+            break;
+
+            case EDB_UINT8 :
+                return sizeof(Value.UI8);
+            break;
+
+            case EDB_BOOL :
+                return sizeof(Value.BoolVal);
+            break;
+
+            case EDB_STRING :
+                return (uint32_t) Value.Str.BufferSize();
+            break;
+
+            case EDB_DOUBLE :
+                return sizeof(Value.Double);
+            break;
+
+            case EDB_DATE_TIME :
+                return (sizeof(Value.Dt.SDate) + sizeof(Value.Dt.STime));
+            break;
+        }
+
+        return 0;
+    }
+
+    // Преобразование значения в массив байт
+    uint32_t Serialize(uint8_t *out)
+    {
+        memcpy(out, &Value, GetSize());
+        return GetSize();
+    }
+
+    // Преобразование массива байт в значение
+    uint32_t DeSerialize(uint8_t *in)
+    {
+        memcpy(&Value, in, GetSize());
+        return GetSize();
+    }
 };
 
 
