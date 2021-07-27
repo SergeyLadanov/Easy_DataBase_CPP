@@ -10,6 +10,22 @@ public:
     uint32_t RecordId;
     uint8_t ColumnNumber;
 private:
+
+    uint16_t Crc16(uint8_t *pcBlock, uint32_t len)
+    {
+        uint16_t crc = 0x1D0F;
+        uint8_t i;
+
+        while (len--)
+        {
+            crc ^= *pcBlock++ << 8;
+
+            for (i = 0; i < 8; i++)
+                crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+        }
+        return crc;
+    }
+    
     uint16_t CRC16;
 
     // Преобразование строки БД в массив байт
