@@ -11,14 +11,14 @@ public:
     uint8_t ColumnNumber;
 private:
 
-    uint16_t Crc16(uint8_t *pcBlock, uint32_t len)
+    uint16_t Crc16(uint8_t *in, uint32_t len)
     {
         uint16_t crc = 0x1D0F;
         uint8_t i;
 
         while (len--)
         {
-            crc ^= *pcBlock++ << 8;
+            crc ^= *in++ << 8;
 
             for (i = 0; i < 8; i++)
                 crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
@@ -28,28 +28,64 @@ private:
     
     uint16_t CRC16;
 
+public:
+
     // Преобразование строки БД в массив байт
     uint32_t Serialize(uint8_t *out)
     {
-        memcpy(out, &RecordId, sizeof(RecordId));
-        out += sizeof(RecordId);
+        uint8_t *ptr = out;
+        memcpy(ptr, &RecordId, sizeof(RecordId));
+        ptr += sizeof(RecordId);
 
         for (uint32_t i = 0; i < ColumnNumber; i++)
         {
-            out += Data[i].Serialize(out);
+            ptr += Data[i].Serialize(ptr);
         }
+
+        // Расчет контрольной суммы записи
+        CRC16 = Crc16(out, Size() - sizeof(CRC16));
+        memcpy(ptr, &CRC16, sizeof(CRC16));
+
+        return Size();
     }
 
-    // массива байт в строку БД
+    // Преобразование массива байт в строку БД
     uint32_t DeSerialize(uint8_t *in)
     {
-        memcpy(&RecordId, in, sizeof(RecordId));
-        in += sizeof(RecordId);
+        uint8_t *ptr = in;
+        uint16_t check_crc;
+        memcpy(&RecordId, ptr, sizeof(RecordId));
+        ptr += sizeof(RecordId);
 
         for (uint32_t i = 0; i < ColumnNumber; i++)
         {
-            in += Data[i].DeSerialize(in);
+            ptr += Data[i].DeSerialize(ptr);
         }
+
+        memcpy(&CRC16, ptr, sizeof(CRC16));
+
+        check_crc = Crc16(in, Size() - sizeof(CRC16));
+
+        if (check_crc == CRC16)
+        {
+            return Size();
+        }
+
+        return 0;
+    }
+
+    // Размер строки в байтах
+    uint32_t Size(void)
+    {
+        uint32_t result = 0;
+        result += sizeof(RecordId);
+
+        for (uint32_t i = 0; i < ColumnNumber; i++)
+        {
+            result += Data[i].Size();;
+        }
+
+        result += sizeof(CRC16);
     }
 
 };

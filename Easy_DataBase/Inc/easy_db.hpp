@@ -26,18 +26,20 @@ private:
     
 
     EasyDB_Row Row;
+    uint32_t Capacity;
 
-    uint32_t MinId;
-    uint32_t MaxId;
-    uint32_t RowCount;
+    uint32_t SelectedMinId;
+    uint32_t SelectedMaxId;
+    uint32_t SelectedRowCount;
 
 public:
     // Конструктор класса
-    EasyDataBase(char *db_name, Easy_DB_Cell *row, uint8_t column_number)
+    EasyDataBase(char *db_name, Easy_DB_Cell *row, uint8_t column_number, uint32_t capacity)
     {
         sprintf(Name, db_name);
         Row.ColumnNumber = column_number;
         Row.Data = row;
+        Capacity = capacity;
     }
 
     

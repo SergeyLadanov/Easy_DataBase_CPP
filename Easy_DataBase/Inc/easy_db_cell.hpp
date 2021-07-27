@@ -42,7 +42,7 @@ public:
     }Value;
 
     // Размер значения в байтах
-    uint32_t GetSize(void)
+    uint32_t Size(void)
     {
         switch(Type)
         {
@@ -89,15 +89,15 @@ public:
     // Преобразование значения в массив байт
     uint32_t Serialize(uint8_t *out)
     {
-        memcpy(out, &Value, GetSize());
-        return GetSize();
+        memcpy(out, &Value, Size());
+        return Size();
     }
 
     // Преобразование массива байт в значение
     uint32_t DeSerialize(uint8_t *in)
     {
-        memcpy(&Value, in, GetSize());
-        return GetSize();
+        memcpy(&Value, in, Size());
+        return Size();
     }
 };
 
