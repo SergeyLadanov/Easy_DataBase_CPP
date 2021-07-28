@@ -6,7 +6,7 @@
 class EasyDB_Row
 {
 public:
-    Easy_DB_Cell *Data;
+    Easy_DB_Cell *Cells;
     uint32_t RecordId;
     uint8_t ColumnNumber;
 private:
@@ -39,7 +39,7 @@ public:
 
         for (uint32_t i = 0; i < ColumnNumber; i++)
         {
-            ptr += Data[i].Serialize(ptr);
+            ptr += Cells[i].Serialize(ptr);
         }
 
         // Расчет контрольной суммы записи
@@ -59,7 +59,7 @@ public:
 
         for (uint32_t i = 0; i < ColumnNumber; i++)
         {
-            ptr += Data[i].DeSerialize(ptr);
+            ptr += Cells[i].DeSerialize(ptr);
         }
 
         memcpy(&CRC16, ptr, sizeof(CRC16));
@@ -82,13 +82,14 @@ public:
 
         for (uint32_t i = 0; i < ColumnNumber; i++)
         {
-            result += Data[i].Size();;
+            result += Cells[i].Size();;
         }
 
         result += sizeof(CRC16);
 
         return result;
     }
+
 
 };
 

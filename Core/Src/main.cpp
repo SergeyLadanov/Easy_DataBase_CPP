@@ -33,6 +33,9 @@ int main(void)
     test_db.GetRowCell(1)->SetValue(0.123f);
     test_db.GetRowCell(2)->SetValue((uint32_t) 0);
 
+    test_db.RowCells()[0].SetValue(0.123f);
+
+    
     // Проба сериализации/десериализации
     // printf("Test: %2.1f\r\n", test_db.GetRowCell(1)->Value.F32);
 
