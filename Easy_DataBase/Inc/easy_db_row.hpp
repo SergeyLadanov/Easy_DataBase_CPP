@@ -3,6 +3,8 @@
 
 #include "easy_db_cell.hpp"
 
+#define DEBUG_ROW 0
+
 class EasyDB_Row
 {
 public:
@@ -46,6 +48,10 @@ public:
         CRC16 = Crc16(out, Size() - sizeof(CRC16));
         memcpy(ptr, &CRC16, sizeof(CRC16));
 
+        #if DEBUG_ROW != 0
+        printf("Row size in bytes (serialized): %d\r\n", Size());
+        #endif
+
         return Size();
     }
 
@@ -65,6 +71,10 @@ public:
         memcpy(&CRC16, ptr, sizeof(CRC16));
 
         check_crc = Crc16(in, Size() - sizeof(CRC16));
+
+        #if DEBUG_ROW != 0
+        printf("Row size in bytes (deserialized): %d\r\n", Size());
+        #endif
 
         if (check_crc == CRC16)
         {

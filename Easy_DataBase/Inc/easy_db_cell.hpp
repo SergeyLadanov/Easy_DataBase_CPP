@@ -2,6 +2,7 @@
 #define __EASY_DB_CELL_HPP_
 
 #include <cstdint>
+#include <cstdio>
 #include "easy_db_string.hpp"
 #include "easy_db_datetime.hpp"
 
@@ -23,7 +24,7 @@ typedef enum {
 class Easy_DB_Cell
 {
 public:        
-    uint8_t Type;
+    uint8_t Type = 0;
 
     union __Value
     {
@@ -90,14 +91,35 @@ public:
     // Преобразование значения в массив байт
     uint32_t Serialize(uint8_t *out)
     {
-        memcpy(out, &Value, Size());
+
+        switch (Type)
+        {   
+            case EDB_STRING :
+                memcpy(out, Value.Str.Buf, Size());
+                break;
+
+            default:
+                memcpy(out, &Value, Size());
+            break;
+        }
+        
         return Size();
     }
 
     // Преобразование массива байт в значение
     uint32_t DeSerialize(uint8_t *in)
     {
-        memcpy(&Value, in, Size());
+        switch (Type)
+        {   
+            case EDB_STRING :
+                memcpy(Value.Str.Buf, in, Size());
+                break;
+
+            default:
+                memcpy(&Value, in, Size());
+            break;
+        }
+        
         return Size();
     }
 
@@ -121,6 +143,12 @@ public:
     inline void SetValue(Easy_DB_DateTime val)
     {
         Value.Dt = val;
+    }
+
+
+    inline void SetValue(char *str)
+    {
+        sprintf(Value.Str.Buf, str);
     }
 
 };

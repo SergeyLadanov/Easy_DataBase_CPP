@@ -1,6 +1,8 @@
 #include "easy_db.hpp"   
  
 
+#define DEBUG_EDB 0
+
 // Загрузка инфомации о БД    
 int8_t EasyDataBase::Init(void)
 {
@@ -14,7 +16,9 @@ int8_t EasyDataBase::Init(void)
 
             if (File == nullptr)
             {
+                #if DEBUG_EDB != 0
                 printf("Failed to create database!\r\n");
+                #endif
                 return -1;
             }
         }
@@ -72,7 +76,9 @@ int8_t EasyDataBase::Select(void)
 
     if (File == nullptr)
     {
+        #if DEBUG_EDB != 0
         printf("Failed to open file for selecting\r\n");
+        #endif
         status = -1;
     }
     #endif
@@ -102,7 +108,9 @@ int8_t EasyDataBase::Select(void)
 
             if (Row.DeSerialize(readBuffer) != Row.Size())
             {
+                #if DEBUG_EDB != 0
                 printf("Record checksum error\r\n");
+                #endif
                 continue;
             }
 
@@ -150,7 +158,9 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
     if (File == nullptr)
     {
+        #if DEBUG_EDB != 0
         printf("Failed to open file for selecting\r\n");
+        #endif
         status = -1;
     }
     #endif
@@ -180,7 +190,9 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
             if (Row.DeSerialize(readBuffer) != Row.Size())
             {
+                #if DEBUG_EDB != 0
                 printf("Record checksum error\r\n");
+                #endif
                 continue;
             }
 
@@ -231,7 +243,9 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         if (File == nullptr)
         {
-            printf("Failed to open file for writing row\r\n"); 
+            #if DEBUG_EDB != 0
+            printf("Failed to open file for writing row\r\n");
+            #endif 
             status = -1;
             break;
         }
@@ -250,9 +264,11 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         if (read_bytes != Row.Size())
         {
+            #if DEBUG_EDB != 0
             printf("Read bytes no match with rowsize!\r\n");
             printf("Read bytes: %d\r\n", read_bytes);
             printf("Row size: %d\r\n", Row.Size());
+            #endif
             status = -1;
             break;
         }
@@ -261,13 +277,17 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         if (Row.DeSerialize(readBuffer) != Row.Size())
         {
+            #if DEBUG_EDB != 0
             printf("Record checksum error\r\n");
+            #endif
             memIndex = (memIndex + 1) % Capacity;
             continue;
         }
         else
         {
+            #if DEBUG_EDB != 0
             printf("Row id: %d\r\n", Row.RecordId);
+            #endif
             break;
         }
 
@@ -290,7 +310,9 @@ int8_t EasyDataBase::WriteRow(void)
 
     if (File == nullptr)
     {
+        #if DEBUG_EDB != 0
         printf("Failed to open file for writing row\r\n");
+        #endif
         return -1;
     }
 

@@ -8,15 +8,15 @@
 class Easy_DB_String
 {
 public:
-    char *Str;
+    char *Buf = nullptr;
 private:
-    uint16_t BuffSize;
+    uint16_t BuffSize = 0;
 public:
 
     // Получение длины строки
     uint16_t Length(void)
     {
-        return strlen(Str);
+        return strlen(Buf);
     }
 
     // Получение размера буфера строки
@@ -28,7 +28,7 @@ public:
     // Инициализация строки
     void Init(char *buf, uint16_t len)
     {
-        Str = buf;
+        Buf = buf;
         BuffSize = len;
     }
 

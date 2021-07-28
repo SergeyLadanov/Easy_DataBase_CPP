@@ -4,16 +4,10 @@
 #include <ctime> 
 #include <unistd.h>
 
- static Easy_DB_Cell test_row[4] = {{EDB_DATE_TIME}, {EDB_FLOAT}, {EDB_UINT32}, {EDB_UINT32}};
 
+static Easy_DB_Cell test_row[5] = {{EDB_DATE_TIME}, {EDB_FLOAT}, {EDB_UINT32}, {EDB_UINT32}, {EDB_STRING}};
 
-EasyDataBase test_db("Test", test_row, 4, 1000);
-
-
-uint32_t testNumber = 0;
-
-
-
+EasyDataBase test_db("Test", test_row, 5, 1000);
 
 
 // Основная программа
@@ -22,32 +16,37 @@ int main(void)
     Easy_DB_DateTime dt, start, end;
     struct tm *u;
 	time_t timer;
-    dt.Skip = 0;
-
+    uint32_t testNumber = 0;
+    
+    static char strBuf[64];
+    test_row[4].Value.Str.Init(strBuf, sizeof(strBuf));
     test_db.Init();
+    
 
     
-    start.SDate.Date = 27;
+    start.SDate.Date = 29;
     start.SDate.Month = 07;
     start.SDate.Year = 21;
-    start.STime.Hours = 22;
-    start.STime.Minutes = 41;
-    start.STime.Seconds = 35;
+    start.STime.Hours = 00;
+    start.STime.Minutes = 22;
+    start.STime.Seconds = 55;
 
-    end.SDate.Date = 28;
+    end.SDate.Date = 29;
     end.SDate.Month = 07;
     end.SDate.Year = 21;
-    end.STime.Hours = 22;
-    end.STime.Minutes = 42;
-    end.STime.Seconds = 22;
+    end.STime.Hours = 00;
+    end.STime.Minutes = 23;
+    end.STime.Seconds = 10;
 
     test_db.GetRowCell(0)->SetValue(dt);
     test_db.GetRowCell(1)->SetValue(0.123f);
     test_db.GetRowCell(2)->SetValue((uint32_t) 0);
+    test_db.GetRowCell(4)->SetValue((char *) "Hello world!!!");
+    
 
-    //test_db.Select(&start, &end);
+    test_db.Select(&start, &end);
 
-    test_db.Select();
+    //test_db.Select();
 
     printf("Selected row count: %d\r\n", test_db.GetSelectedRowCount());
 
@@ -60,9 +59,9 @@ int main(void)
         }
         else
         {
-            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d\r\n", test_db.RowCells()[0].Value.Dt.SDate.Date, test_db.RowCells()[0].Value.Dt.SDate.Month, test_db.RowCells()[0].Value.Dt.SDate.Year,
+            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].Value.Dt.SDate.Date, test_db.RowCells()[0].Value.Dt.SDate.Month, test_db.RowCells()[0].Value.Dt.SDate.Year,
                     test_db.RowCells()[0].Value.Dt.STime.Hours, test_db.RowCells()[0].Value.Dt.STime.Minutes, test_db.RowCells()[0].Value.Dt.STime.Seconds,
-                    test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32, test_db.RowCells()[3].Value.UI32);
+                    test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32, test_db.RowCells()[3].Value.UI32, test_db.RowCells()[4].Value.Str.Buf);
         }
     }
 
