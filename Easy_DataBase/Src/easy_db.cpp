@@ -1,4 +1,5 @@
-#include "easy_db.hpp"    
+#include "easy_db.hpp"   
+ 
 
 // Загрузка инфомации о БД    
 int8_t EasyDataBase::Init(void)
@@ -125,7 +126,80 @@ int8_t EasyDataBase::Select(void)
 // Выделение записей по дате и времени, с указанием колонки, содержащей дату и время
 int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint8_t dtColIndex = 0)
 {
-    
+    uint8_t *readBuffer = new uint8_t[Row.Size()];
+    uint32_t read_bytes = 0;
+    int8_t status = 0;
+
+    SelectedMinId = 0xFFFFFFFF;
+    SelectedMaxId = 0;
+    SelectedRowCount = 0;
+
+    #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+    File = fopen(Name, "rb");
+
+    if (File == nullptr)
+    {
+        printf("Failed to open file for selecting\r\n");
+        status = -1;
+    }
+    #endif
+
+    #if defined(__arm__)
+        
+    #endif
+
+    else
+    {
+
+        for (uint32_t i = 0; i < Capacity; i++)
+        {
+            #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+            read_bytes = fread(readBuffer, sizeof(uint8_t), Row.Size(), File);
+            #endif
+
+            #if defined(__arm__)
+        
+            #endif
+
+            if (read_bytes != Row.Size())
+            {
+                break;
+            }
+
+
+            if (Row.DeSerialize(readBuffer) != Row.Size())
+            {
+                printf("Record checksum error\r\n");
+                continue;
+            }
+
+            if ((Easy_DB_DateTime::Compare(&Row.Cells[dtColIndex].Value.Dt, start) >= 0) && 
+                (Easy_DB_DateTime::Compare(&Row.Cells[dtColIndex].Value.Dt, end) <= 0))
+            {
+                SelectedRowCount++;
+
+                if (Row.RecordId > SelectedMaxId)
+                {
+                    SelectedMaxId = Row.RecordId;
+                }
+
+                if (Row.RecordId < SelectedMinId)
+                {
+                    SelectedMinId = Row.RecordId;
+                }
+            }
+        }
+
+        #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+        fclose(File);
+        #endif
+
+
+    }
+  
+    delete[] readBuffer;
+
+    return status;
 }
 
 

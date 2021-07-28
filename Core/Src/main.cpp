@@ -7,7 +7,7 @@
 
 EasyDataBase test_db("Test", test_row, 4, 20);
 
-uint8_t TestBuffer[1024];
+// uint8_t TestBuffer[1024];
 
 
 
@@ -17,7 +17,7 @@ uint8_t TestBuffer[1024];
 int main(void)
 {
     Easy_DB_DateTime dt;
-    uint32_t test_bytes;
+    //uint32_t test_bytes;
 
     test_db.Init();
 
