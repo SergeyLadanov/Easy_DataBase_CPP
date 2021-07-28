@@ -33,7 +33,7 @@ int main(void)
     test_db.GetRowCell(1)->SetValue(0.123f);
     test_db.GetRowCell(2)->SetValue((uint32_t) 0);
 
-    for (uint32_t i = 0; i < test_db.GetRowCapacity() + 5; i++)
+    for (uint32_t i = 0; i < 1; i++)
     {
         if (test_db.WriteRow() == -1)
         {
@@ -45,8 +45,10 @@ int main(void)
 
     test_db.Select();
 
+    printf("Selected row count: %d\r\n", test_db.GetSelectedRowCount());
 
-    for (uint32_t i = 0; i < test_db.GetRowCapacity(); i++)
+
+    for (uint32_t i = 0; i < test_db.GetSelectedRowCount(); i++)
     {
         if (test_db.ReadSelectedRow(i) == -1)
         {

@@ -51,6 +51,12 @@ public:
         return Row.ColumnNumber;
     }
 
+    // Получить число выделенных строк
+    uint32_t GetSelectedRowCount(void)
+    {
+        return SelectedRowCount;
+    }
+
     // Получение маскимального числа строк БД
     uint32_t GetRowCapacity(void)
     {

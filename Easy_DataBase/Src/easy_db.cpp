@@ -28,6 +28,14 @@ int8_t EasyDataBase::Init(void)
     #endif
 
 
+    Select();
+
+    if (SelectedRowCount > 0)
+    {
+        Row.RecordId = (SelectedMaxId + 1) % (2 * Capacity);
+        WriteIndex = (((SelectedMaxId) % (Capacity)) + 1) % Capacity;
+    }
+
     return 0;
 }
 
