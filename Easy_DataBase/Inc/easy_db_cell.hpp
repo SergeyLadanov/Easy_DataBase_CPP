@@ -21,9 +21,10 @@ typedef enum {
 
 // Класс ячейки с данными
 class Easy_DB_Cell
-{    
-public:
+{
+public:        
     uint8_t Type;
+
     union __Value
     {
         float F32;
@@ -99,6 +100,29 @@ public:
         memcpy(&Value, in, Size());
         return Size();
     }
+
+    // Установка значения
+    inline void SetValue(float val)
+    {
+        Value.F32 = val;
+    }
+
+    inline void SetValue(uint32_t val)
+    {
+        Value.UI32 = val;
+    }
+
+    inline void SetValue(uint64_t val)
+    {
+        Value.UI64 = val;
+    }
+
+
+    inline void SetValue(Easy_DB_DateTime val)
+    {
+        Value.Dt = val;
+    }
+
 };
 
 

@@ -86,6 +86,8 @@ public:
         }
 
         result += sizeof(CRC16);
+
+        return result;
     }
 
 };

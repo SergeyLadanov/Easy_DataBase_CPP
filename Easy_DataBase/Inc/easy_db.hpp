@@ -24,7 +24,7 @@ private:
 
     char Name[EDB_NAMEBUFFER_SIZE];
     
-
+public:
     EasyDB_Row Row;
     uint32_t Capacity;
 
@@ -32,15 +32,21 @@ private:
     uint32_t SelectedMaxId;
     uint32_t SelectedRowCount;
 
-public:
+
     // Конструктор класса
-    EasyDataBase(char *db_name, Easy_DB_Cell *row, uint8_t column_number, uint32_t capacity)
+    EasyDataBase(const char *db_name, Easy_DB_Cell *row, uint8_t column_number, uint32_t capacity)
     {
         sprintf(Name, db_name);
         Row.ColumnNumber = column_number;
         Row.Data = row;
         Capacity = capacity;
     }
+
+
+    void Init(void);
+    Easy_DB_Cell *GetRowCell(uint32_t index);
+    int8_t WriteRow(void);
+    
 
     
 };
