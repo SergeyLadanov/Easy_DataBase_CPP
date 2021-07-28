@@ -7,7 +7,7 @@
  static Easy_DB_Cell test_row[4] = {{EDB_DATE_TIME}, {EDB_FLOAT}, {EDB_UINT32}, {EDB_UINT32}};
 
 
-EasyDataBase test_db("Test", test_row, 4, 25);
+EasyDataBase test_db("Test", test_row, 4, 1000);
 
 
 uint32_t testNumber = 0;
@@ -27,23 +27,25 @@ int main(void)
     test_db.Init();
 
     
-    start.SDate.Date = 28;
+    start.SDate.Date = 27;
     start.SDate.Month = 07;
     start.SDate.Year = 21;
-    start.STime.Hours = 9;
-    start.STime.Minutes = 25;
-    start.STime.Seconds = 0;
+    start.STime.Hours = 22;
+    start.STime.Minutes = 41;
+    start.STime.Seconds = 35;
 
     end.SDate.Date = 28;
     end.SDate.Month = 07;
     end.SDate.Year = 21;
-    end.STime.Hours = 9;
-    end.STime.Minutes = 25;
-    end.STime.Seconds = 0;
+    end.STime.Hours = 22;
+    end.STime.Minutes = 42;
+    end.STime.Seconds = 22;
 
     test_db.GetRowCell(0)->SetValue(dt);
     test_db.GetRowCell(1)->SetValue(0.123f);
     test_db.GetRowCell(2)->SetValue((uint32_t) 0);
+
+    //test_db.Select(&start, &end);
 
     test_db.Select();
 
@@ -58,13 +60,17 @@ int main(void)
         }
         else
         {
-            printf("Row values: %2.4f, %d\r\n", test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32);
+            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d\r\n", test_db.RowCells()[0].Value.Dt.SDate.Date, test_db.RowCells()[0].Value.Dt.SDate.Month, test_db.RowCells()[0].Value.Dt.SDate.Year,
+                    test_db.RowCells()[0].Value.Dt.STime.Hours, test_db.RowCells()[0].Value.Dt.STime.Minutes, test_db.RowCells()[0].Value.Dt.STime.Seconds,
+                    test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32, test_db.RowCells()[3].Value.UI32);
         }
     }
 
 
     while(1)
     {
+
+        sleep(5);
         timer = time(NULL);
 		u = localtime(&timer);
 
@@ -79,6 +85,10 @@ int main(void)
         printf("Time and Date: %02d/%02d/%02d %02d:%02d:%02d\r\n", dt.SDate.Date, dt.SDate.Month, dt.SDate.Year,
                  dt.STime.Hours, dt.STime.Minutes, dt.STime.Seconds);
 
+        test_db.GetRowCell(0)->SetValue(dt);
+        test_db.GetRowCell(2)->SetValue(testNumber++);
+        test_db.GetRowCell(3)->SetValue(testNumber + 10);
+
         printf("Writing row...\r\n");
 
         if (test_db.WriteRow() == -1)
@@ -86,12 +96,6 @@ int main(void)
             printf("Failed to write row\r\n");
         }
 
-        test_db.GetRowCell(0)->SetValue(dt);
-        test_db.GetRowCell(2)->SetValue(testNumber++);
-        test_db.GetRowCell(3)->SetValue(testNumber + 10);
-
-
-        sleep(5);
     }
 
     return 0;  

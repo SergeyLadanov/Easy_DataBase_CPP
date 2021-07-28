@@ -33,7 +33,7 @@ int8_t EasyDataBase::Init(void)
     if (SelectedRowCount > 0)
     {
         Row.RecordId = (SelectedMaxId + 1) % (2 * Capacity);
-        WriteIndex = (((SelectedMaxId) % (Capacity)) + 1) % Capacity;
+        WriteIndex = (SelectedMaxIndex + 1) % Capacity;
     }
 
     return 0;
@@ -110,11 +110,13 @@ int8_t EasyDataBase::Select(void)
 
             if (Row.RecordId > SelectedMaxId)
             {
+                SelectedMaxIndex = i;
                 SelectedMaxId = Row.RecordId;
             }
 
             if (Row.RecordId < SelectedMinId)
             {
+                SelectedMinIndex = i;
                 SelectedMinId = Row.RecordId;
             }
         }
@@ -132,11 +134,12 @@ int8_t EasyDataBase::Select(void)
 }
 
 // Выделение записей по дате и времени, с указанием колонки, содержащей дату и время
-int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint8_t dtColIndex = 0)
+int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint8_t dtColIndex)
 {
     uint8_t *readBuffer = new uint8_t[Row.Size()];
     uint32_t read_bytes = 0;
     int8_t status = 0;
+
 
     SelectedMinId = 0xFFFFFFFF;
     SelectedMaxId = 0;
@@ -188,11 +191,13 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
                 if (Row.RecordId > SelectedMaxId)
                 {
+                    SelectedMaxIndex = i;
                     SelectedMaxId = Row.RecordId;
                 }
 
                 if (Row.RecordId < SelectedMinId)
                 {
+                    SelectedMinIndex = i;
                     SelectedMinId = Row.RecordId;
                 }
             }
@@ -215,7 +220,7 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 {
     uint8_t *readBuffer = new uint8_t[Row.Size()];
-    uint32_t memIndex = ((SelectedMinId % Capacity) + index) % Capacity;
+    uint32_t memIndex = (SelectedMinIndex + index) % Capacity;
     uint32_t read_bytes = 0;
     int8_t status = 0;
 

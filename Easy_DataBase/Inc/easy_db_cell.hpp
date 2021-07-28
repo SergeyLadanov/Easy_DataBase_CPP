@@ -80,7 +80,7 @@ public:
             break;
 
             case EDB_DATE_TIME :
-                return (sizeof(Value.Dt.SDate) + sizeof(Value.Dt.STime));
+                return sizeof(Value.Dt);
             break;
         }
 
