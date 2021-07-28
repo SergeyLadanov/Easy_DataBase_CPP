@@ -9,21 +9,22 @@ int8_t EasyDataBase::Init(void)
 
     // Создание 
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
-        File = fopen(Name, "rb");
+    FILE *File;
+    File = fopen(Name, "rb");
+    if (File == nullptr)
+    {
+        File = fopen(Name, "wb");
+
         if (File == nullptr)
         {
-            File = fopen(Name, "wb");
-
-            if (File == nullptr)
-            {
-                #if DEBUG_EDB != 0
-                printf("Failed to create database!\r\n");
-                #endif
-                return -1;
-            }
+            #if DEBUG_EDB != 0
+            printf("Failed to create database!\r\n");
+            #endif
+            return -1;
         }
+    }
 
-        fclose(File);
+    fclose(File);
 
     #endif
 
@@ -39,6 +40,8 @@ int8_t EasyDataBase::Init(void)
         Row.RecordId = (SelectedMaxId + 1) % (2 * Capacity);
         WriteIndex = (SelectedMaxIndex + 1) % Capacity;
     }
+
+    Enabled = true;
 
     return 0;
 }
@@ -63,6 +66,12 @@ Easy_DB_Cell *EasyDataBase::RowCells(void)
 // Выделение строк
 int8_t EasyDataBase::Select(void)
 {
+
+    if (!Enabled)
+    {
+        return -1;
+    }
+
     uint8_t *readBuffer = new uint8_t[Row.Size()];
     uint32_t read_bytes = 0;
     int8_t status = 0;
@@ -71,7 +80,12 @@ int8_t EasyDataBase::Select(void)
     SelectedMaxId = 0;
     SelectedRowCount = 0;
 
+    
+
+    
+
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+    FILE *File;
     File = fopen(Name, "rb");
 
     if (File == nullptr)
@@ -144,6 +158,12 @@ int8_t EasyDataBase::Select(void)
 // Выделение записей по дате и времени, с указанием колонки, содержащей дату и время
 int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint8_t dtColIndex)
 {
+
+    if (!Enabled)
+    {
+        return -1;
+    }
+
     uint8_t *readBuffer = new uint8_t[Row.Size()];
     uint32_t read_bytes = 0;
     int8_t status = 0;
@@ -154,6 +174,7 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
     SelectedRowCount = 0;
 
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+    FILE *File;
     File = fopen(Name, "rb");
 
     if (File == nullptr)
@@ -231,6 +252,11 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 // Чтение выделенной строки
 int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 {
+    if (!Enabled)
+    {
+        return -1;
+    }
+
     uint8_t *readBuffer = new uint8_t[Row.Size()];
     uint32_t memIndex = (SelectedMinIndex + index) % Capacity;
     uint32_t read_bytes = 0;
@@ -239,6 +265,7 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
     for (uint32_t i = 0; i < Capacity; i++)
     {
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+        FILE *File;
         File = fopen(Name, "rb");
 
         if (File == nullptr)
@@ -301,10 +328,16 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 // Запись строки в файл
 int8_t EasyDataBase::WriteRow(void)
 {
+    if (!Enabled)
+    {
+        return -1;
+    }
+    
     uint8_t *writeBuffer = new uint8_t[Row.Size()];
     Row.Serialize(writeBuffer);
 
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
+    FILE *File;
     File = fopen(Name, "r+b");
     
 

@@ -14,16 +14,9 @@
 class EasyDataBase
 {
 private:
-    #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
-    FILE *File;
-    #endif
-
-    #if defined(__arm__)
-    FIL File;
-    #endif
-
     char Name[EDB_NAMEBUFFER_SIZE];
     
+    bool Enabled = false;
 
     EasyDB_Row Row;
     uint32_t Capacity = 0;
