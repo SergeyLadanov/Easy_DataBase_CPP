@@ -33,7 +33,34 @@ int main(void)
     test_db.GetRowCell(1)->SetValue(0.123f);
     test_db.GetRowCell(2)->SetValue((uint32_t) 0);
 
-    test_db.RowCells()[0].SetValue(0.123f);
+    for (uint32_t i = 0; i < test_db.GetRowCapacity() + 5; i++)
+    {
+        if (test_db.WriteRow() == -1)
+        {
+            printf("Failed to write row\r\n");
+        }
+
+        test_db.GetRowCell(2)->SetValue((uint32_t) i);
+    }
+
+    test_db.Select();
+
+
+    for (uint32_t i = 0; i < test_db.GetRowCapacity(); i++)
+    {
+        if (test_db.ReadSelectedRow(i) == -1)
+        {
+            printf("Failed to read row\r\n");
+        }
+        else
+        {
+            printf("Row values: %2.4f, %d\r\n", test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32);
+        }
+
+
+    }
+
+
 
     
     // Проба сериализации/десериализации

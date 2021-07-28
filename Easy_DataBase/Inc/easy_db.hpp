@@ -51,12 +51,18 @@ public:
         return Row.ColumnNumber;
     }
 
+    // Получение маскимального числа строк БД
+    uint32_t GetRowCapacity(void)
+    {
+        return Capacity;
+    }
+
     Easy_DB_Cell *GetRowCell(uint32_t index);
     Easy_DB_Cell *RowCells(void);
     int8_t Init(void);
     int8_t WriteRow(void);
     int8_t Select(void);
-    Easy_DB_Cell *ReadSelectedRow(void);
+    int8_t ReadSelectedRow(uint32_t index);
     int8_t EndSelect(void);
 };
 

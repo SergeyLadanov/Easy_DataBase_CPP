@@ -50,8 +50,7 @@ C_SOURCES =  \
 # CPP sources
 CPP_SOURCES = \
 Core/Src/main.cpp  \
-Easy_DataBase/Src/easy_db.cpp \
-Easy_DataBase/Src/easy_db_cell.cpp
+Easy_DataBase/Src/easy_db.cpp
 
 
 
