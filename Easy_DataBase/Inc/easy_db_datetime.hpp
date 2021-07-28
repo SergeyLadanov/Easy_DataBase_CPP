@@ -41,29 +41,23 @@ private:
     {
         uint8_t Hours = 0;
         uint8_t Minutes = 0;          
-        uint8_t Seconds = 0;
-        uint32_t SubSeconds = 0;
-        uint32_t SecondFraction = 0;
-        uint8_t TimeFormat = 0;       
-        uint32_t DayLightSaving = 0;  
-        uint32_t StoreOperation = 0;  
-    }RTC_TimeTypeDef;
+        uint8_t Seconds = 0; 
+    }TimeTypeDef;
 
     /**
      * @brief  RTC Date structure definition
      */
     typedef struct
     {
-        uint8_t WeekDay = 0;
         uint8_t Month = 0;
         uint8_t Date = 0;
         uint8_t Year = 0; 
-    }RTC_DateTypeDef;
+    }DateTypeDef;
     
 public:
     uint8_t Skip = 0;
-	RTC_DateTypeDef SDate;
-	RTC_TimeTypeDef STime;
+	DateTypeDef SDate;
+	TimeTypeDef STime;
 
     // Сравнение даты и времени
     static int Compare(Easy_DB_DateTime *start, Easy_DB_DateTime *end);
