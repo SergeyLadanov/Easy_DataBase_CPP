@@ -117,12 +117,17 @@ int8_t EasyDataBase::Select(void)
 
     }
   
-
-
     delete[] readBuffer;
 
     return status;
 }
+
+// Выделение записей по дате и времени, с указанием колонки, содержащей дату и время
+int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint8_t dtColIndex = 0)
+{
+    
+}
+
 
 // Чтение выделенной строки
 int8_t EasyDataBase::ReadSelectedRow(uint32_t index)

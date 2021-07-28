@@ -5,6 +5,9 @@
 
 class Easy_DB_DateTime
 {
+
+public:
+static int Compare(Easy_DB_DateTime *start, Easy_DB_DateTime *end);
 private:
     /**
      * @brief  RTC Time structure definition

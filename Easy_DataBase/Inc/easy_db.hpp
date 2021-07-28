@@ -62,6 +62,7 @@ public:
     int8_t Init(void);
     int8_t WriteRow(void);
     int8_t Select(void);
+    int8_t Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint8_t dtColIndex);
     int8_t ReadSelectedRow(uint32_t index);
     int8_t EndSelect(void);
 };
