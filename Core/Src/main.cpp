@@ -19,6 +19,8 @@ int main(void)
     Easy_DB_DateTime dt;
     uint32_t test_bytes;
 
+    test_db.Init();
+
     dt.Skip = 0;
     dt.SDate.Date = 28;
     dt.SDate.Month = 07;
@@ -31,20 +33,22 @@ int main(void)
     test_db.GetRowCell(1)->SetValue(0.123f);
     test_db.GetRowCell(2)->SetValue((uint32_t) 0);
 
-    printf("Test: %2.1f\r\n", test_db.GetRowCell(1)->Value.F32);
+    // Проба сериализации/десериализации
+    // printf("Test: %2.1f\r\n", test_db.GetRowCell(1)->Value.F32);
 
-    test_bytes = test_db.Row.Serialize(TestBuffer);
+    // test_bytes = test_db.Row.Serialize(TestBuffer);
 
-    printf("%d bytes serialized\r\n", test_bytes);
+    // printf("%d bytes serialized\r\n", test_bytes);
 
-    if ((test_bytes = test_db.Row.DeSerialize(TestBuffer)) == 0)
-    {
-        printf("Checksum error\r\n");
-    }
-    else
-    {
-        printf("%d bytes deserialized\r\n", test_bytes);
-    }
+    // if ((test_bytes = test_db.Row.DeSerialize(TestBuffer)) == 0)
+    // {
+    //     printf("Checksum error\r\n");
+    // }
+    // else
+    // {
+    //     printf("%d bytes deserialized\r\n", test_bytes);
+    // }
+    //-----------------------------------------------------------
 
     return 0;  
 }

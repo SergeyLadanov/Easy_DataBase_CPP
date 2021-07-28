@@ -26,29 +26,32 @@ private:
     
 public:
     EasyDB_Row Row;
-    uint32_t Capacity;
+    uint32_t Capacity = 0;
+    uint32_t WriteIndex = 0;
 
-    uint32_t SelectedMinId;
-    uint32_t SelectedMaxId;
-    uint32_t SelectedRowCount;
+    uint32_t SelectedMinId = 0;
+    uint32_t SelectedMaxId = 0;
+    uint32_t SelectedRowCount = 0;
+
+
 
 
     // Конструктор класса
     EasyDataBase(const char *db_name, Easy_DB_Cell *row, uint8_t column_number, uint32_t capacity)
     {
-        sprintf(Name, db_name);
+        sprintf(Name, "%s.edb", db_name);
         Row.ColumnNumber = column_number;
         Row.Data = row;
+        Row.RecordId = 0;
         Capacity = capacity;
     }
 
 
-    void Init(void);
+    int8_t Init(void);
     Easy_DB_Cell *GetRowCell(uint32_t index);
     int8_t WriteRow(void);
-    
-
-    
+    int8_t Select(void);
+    int8_t EndSelect(void);
 };
 
 
