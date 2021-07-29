@@ -69,7 +69,7 @@ int8_t EasyDataBase::Init(void)
 
     if (SelectedRowCount > 0)
     {
-        Row.RecordId = (SelectedMaxId + 1) % (2 * Capacity);
+        RecordId = (SelectedMaxId + 1) % (2 * Capacity);
         WriteIndex = (SelectedMaxIndex + 1) % Capacity;
     }
 
@@ -118,8 +118,9 @@ int8_t EasyDataBase::Clear(void)
 
 	#endif
 
-    if (status == 0)
+	if (status == 0)
 	{
+		RecordId = 0;
 		WriteIndex = 0;
 	}
 
@@ -486,6 +487,7 @@ int8_t EasyDataBase::WriteRow(void)
     uint8_t *writeBuffer = new uint8_t[Row.Size()];
     uint32_t write_bytes = 0;
 
+    Row.RecordId = RecordId;
     Row.Serialize(writeBuffer);
 
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
@@ -559,7 +561,7 @@ int8_t EasyDataBase::WriteRow(void)
     if (status == 0)
     {
 		WriteIndex = (WriteIndex + 1) % Capacity;
-		Row.RecordId = (Row.RecordId + 1) % (Capacity * 2);
+		RecordId = (RecordId + 1) % (Capacity * 2);
     }
 
     delete[] writeBuffer;

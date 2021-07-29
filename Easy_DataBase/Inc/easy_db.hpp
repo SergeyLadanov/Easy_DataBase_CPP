@@ -21,9 +21,11 @@ private:
     EasyDB_Row Row;
     uint32_t Capacity = 0;
     uint32_t WriteIndex = 0;
+    uint32_t RecordId = 0;
 
     uint32_t SelectedMinId = 0;
     uint32_t SelectedMaxId = 0;
+
 
     uint32_t SelectedMinIndex = 0;
     uint32_t SelectedMaxIndex = 0;
