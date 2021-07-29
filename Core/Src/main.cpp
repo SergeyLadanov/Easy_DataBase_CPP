@@ -56,9 +56,9 @@ int main(void)
         }
         else
         {
-            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].Value.Dt.SDate.Date, test_db.RowCells()[0].Value.Dt.SDate.Month, test_db.RowCells()[0].Value.Dt.SDate.Year,
-                    test_db.RowCells()[0].Value.Dt.STime.Hours, test_db.RowCells()[0].Value.Dt.STime.Minutes, test_db.RowCells()[0].Value.Dt.STime.Seconds,
-                    test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32, test_db.RowCells()[3].Value.UI32, test_db.RowCells()[4].Value.Str.Buf);
+            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].GetDateTime().SDate.Date, test_db.RowCells()[0].GetDateTime().SDate.Month, test_db.RowCells()[0].GetDateTime().SDate.Year,
+                    test_db.RowCells()[0].GetDateTime().STime.Hours, test_db.RowCells()[0].GetDateTime().STime.Minutes, test_db.RowCells()[0].GetDateTime().STime.Seconds,
+                    test_db.RowCells()[1].GetFloat(), test_db.RowCells()[2].GetUint32(), test_db.RowCells()[3].GetUint32(), test_db.RowCells()[4].GetString());
         }
     }
 
@@ -78,9 +78,9 @@ int main(void)
         }
         else
         {
-            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].Value.Dt.SDate.Date, test_db.RowCells()[0].Value.Dt.SDate.Month, test_db.RowCells()[0].Value.Dt.SDate.Year,
-                    test_db.RowCells()[0].Value.Dt.STime.Hours, test_db.RowCells()[0].Value.Dt.STime.Minutes, test_db.RowCells()[0].Value.Dt.STime.Seconds,
-                    test_db.RowCells()[1].Value.F32, test_db.RowCells()[2].Value.UI32, test_db.RowCells()[3].Value.UI32, test_db.RowCells()[4].Value.Str.Buf);
+            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].GetDateTime().SDate.Date, test_db.RowCells()[0].GetDateTime().SDate.Month, test_db.RowCells()[0].GetDateTime().SDate.Year,
+                    test_db.RowCells()[0].GetDateTime().STime.Hours, test_db.RowCells()[0].GetDateTime().STime.Minutes, test_db.RowCells()[0].GetDateTime().STime.Seconds,
+                    test_db.RowCells()[1].GetFloat(), test_db.RowCells()[2].GetUint32(), test_db.RowCells()[3].GetUint32(), test_db.RowCells()[4].GetString());
         }
     }
 

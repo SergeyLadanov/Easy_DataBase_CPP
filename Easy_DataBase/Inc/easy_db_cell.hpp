@@ -129,6 +129,43 @@ public:
         Value.F32 = val;
     }
 
+    inline void SetValue(double val)
+    {
+        Value.Double = val;
+    }
+
+    inline void SetValue(int8_t val)
+    {
+        Value.I8 = val;
+    }
+
+
+    inline void SetValue(int16_t val)
+    {
+        Value.I16 = val;
+    }
+
+    inline void SetValue(int32_t val)
+    {
+        Value.I32 = val;
+    }
+
+    inline void SetValue(int64_t val)
+    {
+        Value.I64 = val;
+    }
+
+    inline void SetValue(uint8_t val)
+    {
+        Value.UI8 = val;
+    }
+
+    inline void SetValue(uint16_t val)
+    {
+        Value.UI16 = val;
+    }
+
+
     inline void SetValue(uint32_t val)
     {
         Value.UI32 = val;
@@ -149,6 +186,85 @@ public:
     inline void SetValue(char *str)
     {
         sprintf(Value.Str.Buf, str);
+    }
+
+
+    inline void SetValue(bool val)
+    {
+        Value.BoolVal = val;
+    }
+
+
+
+
+    // Получение значения
+    inline float GetFloat(void)
+    {
+        return Value.F32;
+    }
+
+
+    inline double GetDouble(void)
+	{
+		return Value.Double;
+	}
+
+	inline int8_t GetInt8(void)
+	{
+		return Value.I8;
+	}
+
+
+	inline int16_t GetInt16(void)
+	{
+		return Value.I16;
+	}
+
+	inline int32_t GetInt32(void)
+	{
+		return Value.I32;
+	}
+
+	inline int64_t GetInt64(void)
+	{
+		return Value.I64;
+	}
+
+	inline uint8_t GetUint8(void)
+	{
+		return Value.UI8;
+	}
+
+	inline uint16_t GetUint16(void)
+	{
+		return Value.UI16;
+	}
+
+    inline uint32_t GetUint32(void)
+    {
+        return Value.UI32;
+    }
+
+    inline uint64_t GetUint64(void)
+    {
+        return Value.UI64;
+    }
+
+
+    inline Easy_DB_DateTime GetDateTime(void)
+    {
+        return Value.Dt;
+    }
+
+
+    inline char *GetString(void)
+    {
+    	return Value.Str.Buf;
+    }
+
+    inline bool GetBool(void)
+    {
+        return Value.BoolVal;
     }
 
 };
