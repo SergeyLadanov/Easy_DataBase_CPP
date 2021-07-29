@@ -27,7 +27,7 @@ private:
         }
         return crc;
     }
-    
+
     uint16_t CRC16;
 
 public:

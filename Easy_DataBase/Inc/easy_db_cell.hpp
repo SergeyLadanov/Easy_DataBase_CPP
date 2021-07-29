@@ -23,7 +23,7 @@ typedef enum {
 // Класс ячейки с данными
 class Easy_DB_Cell
 {
-public:        
+public:
     uint8_t Type = 0;
 
     union __Value
@@ -93,7 +93,7 @@ public:
     {
 
         switch (Type)
-        {   
+        {
             case EDB_STRING :
                 memcpy(out, Value.Str.Buf, Size());
                 break;
@@ -102,7 +102,7 @@ public:
                 memcpy(out, &Value, Size());
             break;
         }
-        
+
         return Size();
     }
 
@@ -110,7 +110,7 @@ public:
     uint32_t DeSerialize(uint8_t *in)
     {
         switch (Type)
-        {   
+        {
             case EDB_STRING :
                 memcpy(Value.Str.Buf, in, Size());
                 break;
@@ -119,7 +119,7 @@ public:
                 memcpy(&Value, in, Size());
             break;
         }
-        
+
         return Size();
     }
 

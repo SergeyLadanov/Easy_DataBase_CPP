@@ -40,8 +40,8 @@ private:
     typedef struct
     {
         uint8_t Hours = 0;
-        uint8_t Minutes = 0;          
-        uint8_t Seconds = 0; 
+        uint8_t Minutes = 0;
+        uint8_t Seconds = 0;
     }TimeTypeDef;
 
     /**
@@ -51,9 +51,9 @@ private:
     {
         uint8_t Month = 0;
         uint8_t Date = 0;
-        uint8_t Year = 0; 
+        uint8_t Year = 0;
     }DateTypeDef;
-    
+
 public:
     uint8_t Skip = 0;
 	DateTypeDef SDate;
