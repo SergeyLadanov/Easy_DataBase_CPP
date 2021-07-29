@@ -64,6 +64,7 @@ int8_t EasyDataBase::Init(void)
 
     Enabled = true;
 
+
     Select();
 
     if (SelectedRowCount > 0)
@@ -71,6 +72,7 @@ int8_t EasyDataBase::Init(void)
         Row.RecordId = (SelectedMaxId + 1) % (2 * Capacity);
         WriteIndex = (SelectedMaxIndex + 1) % Capacity;
     }
+
 
     return 0;
 }
@@ -80,7 +82,7 @@ int8_t EasyDataBase::Clear(void)
 {
 	int8_t status = 0;
 
-    if (!Enabled)
+	if (!Enabled)
 	{
 		return -1;
 	}

@@ -59,6 +59,41 @@ public:
         return Capacity;
     }
 
+    // Получение количества строк в БД
+    uint32_t GetRowCount(void)
+    {
+    	if (Select() == -1)
+    	{
+    		return 0;
+    	}
+
+    	return GetSelectedRowCount();
+    }
+
+    // Чтение первой строки БД
+    int8_t ReadFirstRow(void)
+    {
+    	if (Select() == -1)
+    	{
+    		return -1;
+    	}
+
+    	return ReadSelectedRow(0);
+    }
+
+    // Чтение последней строки БД
+    int8_t ReadLastRow(void)
+    {
+    	if (Select() == -1)
+    	{
+    		return -1;
+    	}
+
+    	return ReadSelectedRow(GetSelectedRowCount() - 1);
+    }
+
+
+
     Easy_DB_Cell *GetRowCell(uint32_t index);
     Easy_DB_Cell *RowCells(void);
     int8_t Init(void);
