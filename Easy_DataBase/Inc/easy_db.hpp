@@ -54,7 +54,7 @@ public:
     }
 
     // Получение маскимального числа строк БД
-    uint32_t GetRowCapacity(void)
+    uint32_t GetCapacity(void)
     {
         return Capacity;
     }

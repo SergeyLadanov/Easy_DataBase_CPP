@@ -62,6 +62,7 @@ int8_t EasyDataBase::Init(void)
 
     #endif
 
+    Enabled = true;
 
     Select();
 
@@ -70,8 +71,6 @@ int8_t EasyDataBase::Init(void)
         Row.RecordId = (SelectedMaxId + 1) % (2 * Capacity);
         WriteIndex = (SelectedMaxIndex + 1) % Capacity;
     }
-
-    Enabled = true;
 
     return 0;
 }
@@ -85,7 +84,7 @@ int8_t EasyDataBase::Clear(void)
 	{
 		return -1;
 	}
-    
+
 	#if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
 	FILE *File;
 	File = fopen(Name, "wb");
