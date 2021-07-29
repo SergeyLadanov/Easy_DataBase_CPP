@@ -80,6 +80,12 @@ int8_t EasyDataBase::Init(void)
 int8_t EasyDataBase::Clear(void)
 {
 	int8_t status = 0;
+
+    if (!Enabled)
+	{
+		return -1;
+	}
+    
 	#if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
 	FILE *File;
 	File = fopen(Name, "wb");
