@@ -8,7 +8,7 @@
 #include "fatfs.h"
 #endif
 
-
+#define EDB_CELL_ARRAY_LEN(X) (sizeof(X)/sizeof(Easy_DB_Cell))
 #define EDB_NAMEBUFFER_SIZE 64
 
 class EasyDataBase

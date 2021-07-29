@@ -7,7 +7,7 @@
 
 static Easy_DB_Cell test_row[5] = {{EDB_DATE_TIME}, {EDB_FLOAT}, {EDB_UINT32}, {EDB_UINT32}, {EDB_STRING}};
 
-EasyDataBase test_db("Test", test_row, 5, 1000);
+EasyDataBase test_db("Test", test_row, EDB_CELL_ARRAY_LEN(test_row), 1000);
 
 
 // Основная программа
