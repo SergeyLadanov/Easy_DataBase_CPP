@@ -118,6 +118,11 @@ int8_t EasyDataBase::Clear(void)
 
 	#endif
 
+    if (status == 0)
+	{
+		WriteIndex = 0;
+	}
+
 	return status;
 }
 
