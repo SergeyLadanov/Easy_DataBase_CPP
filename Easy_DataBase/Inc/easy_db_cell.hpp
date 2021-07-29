@@ -9,10 +9,14 @@
 // Типы значений
 typedef enum {
 	EDB_FLOAT = 1,
-	EDB_UINT64,
-	EDB_UINT32,
-	EDB_UINT16,
+	EDB_INT8,
+	EDB_INT16,
+	EDB_INT32,
+	EDB_INT64,
 	EDB_UINT8,
+	EDB_UINT16,
+	EDB_UINT32,
+	EDB_UINT64,
 	EDB_BOOL,
 	EDB_STRING,
 	EDB_DOUBLE,
@@ -52,20 +56,36 @@ public:
                 return sizeof(Value.F32);
             break;
 
-            case EDB_UINT64 :
-                return sizeof(Value.UI64);
+            case EDB_INT8 :
+                return sizeof(Value.I8);
             break;
 
-            case EDB_UINT32 :
-                return sizeof(Value.UI32);
+            case EDB_INT16 :
+                return sizeof(Value.I16);
+            break;
+
+            case EDB_INT32 :
+                return sizeof(Value.I32);
+            break;
+
+            case EDB_INT64 :
+                return sizeof(Value.I64);
+            break;
+
+            case EDB_UINT8 :
+                return sizeof(Value.UI8);
             break;
 
             case EDB_UINT16 :
                 return sizeof(Value.UI16);
             break;
 
-            case EDB_UINT8 :
-                return sizeof(Value.UI8);
+            case EDB_UINT32 :
+                return sizeof(Value.UI32);
+            break;
+
+            case EDB_UINT64 :
+                return sizeof(Value.UI64);
             break;
 
             case EDB_BOOL :
