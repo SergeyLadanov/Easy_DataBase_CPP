@@ -282,6 +282,11 @@ public:
     	return Value.Str.Buf;
     }
 
+    inline Easy_DB_String *GetStringInstance(void)
+    {
+    	return &Value.Str;
+    }
+
     inline bool GetBool(void)
     {
         return Value.BoolVal;
