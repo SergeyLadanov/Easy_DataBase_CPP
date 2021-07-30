@@ -1,7 +1,7 @@
 #include "easy_db.hpp"
 
 
-#define DEBUG_EDB 0
+#define DEBUG_EDB 1
 
 // Загрузка инфомации о БД
 int8_t EasyDataBase::Init(void)
@@ -161,6 +161,10 @@ int8_t EasyDataBase::Select(void)
     SelectedMaxId = 0;
     SelectedRowCount = 0;
 
+    uint32_t id_bkp = 0;
+    bool first_iteration = true;
+    bool founded = false;
+
 
 
 
@@ -224,17 +228,59 @@ int8_t EasyDataBase::Select(void)
 
             SelectedRowCount++;
 
-            if (Row.RecordId > SelectedMaxId)
+            printf("Read selectid in select:%d\r\n", Row.RecordId);
+
+            if (first_iteration)
             {
-                SelectedMaxIndex = i;
-                SelectedMaxId = Row.RecordId;
+            	id_bkp = Row.RecordId;
+                SelectedMinId = id_bkp;
+            	first_iteration = false;
+                SelectedMinIndex = i;
+            }
+            else
+            {
+                if (!founded)
+                {
+                    if (((id_bkp + 1) % (2 * Capacity)) != Row.RecordId)
+                    {
+                        printf("Founed!\r\n");
+
+                        
+                        printf("Previous Id: %d\r\n", id_bkp);
+                        printf("New id: %d\r\n", Row.RecordId);
+
+                        SelectedMaxIndex = i - 1;
+                        SelectedMinIndex = i;
+                        SelectedMaxId = id_bkp;
+                        SelectedMinId = Row.RecordId;
+                        founded = true;
+
+                        printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
+                        printf("Found MinIndex: %d\r\n", SelectedMinIndex);
+                        printf("Found MaxId: %d\r\n", SelectedMaxId);
+                        printf("Found MinId: %d\r\n", SelectedMinId);
+                        
+                    }
+                    else
+                    {
+                        SelectedMaxIndex = i;
+                        SelectedMaxId = Row.RecordId;
+                        id_bkp = Row.RecordId;
+                    }
+                }
             }
 
-            if (Row.RecordId < SelectedMinId)
-            {
-                SelectedMinIndex = i;
-                SelectedMinId = Row.RecordId;
-            }
+            // if (Row.RecordId > SelectedMaxId)
+            // {
+            //     SelectedMaxIndex = i;
+            //     SelectedMaxId = Row.RecordId;
+            // }
+
+            // if (Row.RecordId < SelectedMinId)
+            // {
+            //     SelectedMinIndex = i;
+            //     SelectedMinId = Row.RecordId;
+            // }
         }
 
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
@@ -250,6 +296,15 @@ int8_t EasyDataBase::Select(void)
 
 
     }
+
+    printf("\r\n------------Reuslt-----------\r\n\r\n");
+
+    printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
+    printf("Found MinIndex: %d\r\n", SelectedMinIndex);
+    printf("Found MaxId: %d\r\n", SelectedMaxId);
+    printf("Found MinId: %d\r\n", SelectedMinId);
+
+    printf("\r\n------------------------------\r\n");
 
     delete[] readBuffer;
 
@@ -273,6 +328,10 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
     SelectedMinId = 0xFFFFFFFF;
     SelectedMaxId = 0;
     SelectedRowCount = 0;
+
+    uint32_t id_bkp = 0;
+    bool first_iteration = true;
+    bool founded = false;
 
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
     FILE *File;
@@ -336,17 +395,47 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
             {
                 SelectedRowCount++;
 
-                if (Row.RecordId > SelectedMaxId)
+                if (first_iteration)
                 {
-                    SelectedMaxIndex = i;
-                    SelectedMaxId = Row.RecordId;
+                    id_bkp = Row.RecordId;
+                    SelectedMinId = id_bkp;
+                    first_iteration = false;
+                    SelectedMinIndex = i;
+                }
+                else
+                {
+                    if (!founded)
+                    {
+                        if (((id_bkp + 1) % (2 * Capacity)) != Row.RecordId)
+                        {
+                            printf("Founed!\r\n");
+
+                            
+                            printf("Previous Id: %d\r\n", id_bkp);
+                            printf("New id: %d\r\n", Row.RecordId);
+
+                            SelectedMaxIndex = i - 1;
+                            SelectedMinIndex = i;
+                            SelectedMaxId = id_bkp;
+                            SelectedMinId = Row.RecordId;
+                            founded = true;
+
+                            printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
+                            printf("Found MinIndex: %d\r\n", SelectedMinIndex);
+                            printf("Found MaxId: %d\r\n", SelectedMaxId);
+                            printf("Found MinId: %d\r\n", SelectedMinId);
+                            
+                        }
+                        else
+                        {
+                            SelectedMaxIndex = i;
+                            SelectedMaxId = Row.RecordId;
+                            id_bkp = Row.RecordId;
+                        }
+                    }
                 }
 
-                if (Row.RecordId < SelectedMinId)
-                {
-                    SelectedMinIndex = i;
-                    SelectedMinId = Row.RecordId;
-                }
+                    
             }
         }
 
@@ -560,6 +649,9 @@ int8_t EasyDataBase::WriteRow(void)
 
     if (status == 0)
     {
+
+        printf("Writed Id: %d\r\n", RecordId);
+        printf("Writed Index: %d\r\n", WriteIndex);
 		WriteIndex = (WriteIndex + 1) % Capacity;
 		RecordId = (RecordId + 1) % (Capacity * 2);
     }

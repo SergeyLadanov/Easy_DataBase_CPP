@@ -7,7 +7,28 @@
 
 static Easy_DB_Cell test_row[5] = {{EDB_DATE_TIME}, {EDB_FLOAT}, {EDB_UINT32}, {EDB_UINT32}, {EDB_STRING}};
 
-EasyDataBase test_db("Test", test_row, EDB_CELL_ARRAY_LEN(test_row), 1000);
+EasyDataBase test_db("Test", test_row, EDB_CELL_ARRAY_LEN(test_row), 5);
+
+void ReadAllRows(void)
+{
+    test_db.Select();
+
+    printf("Selected row count: %d\r\n", test_db.GetSelectedRowCount());
+
+    for (uint32_t i = 0; i < test_db.GetSelectedRowCount(); i++)
+    {
+        if (test_db.ReadSelectedRow(i) == -1)
+        {
+            printf("Failed to read row\r\n");
+        }
+        else
+        {
+            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].GetDateTime().SDate.Date, test_db.RowCells()[0].GetDateTime().SDate.Month, test_db.RowCells()[0].GetDateTime().SDate.Year,
+                    test_db.RowCells()[0].GetDateTime().STime.Hours, test_db.RowCells()[0].GetDateTime().STime.Minutes, test_db.RowCells()[0].GetDateTime().STime.Seconds,
+                    test_db.RowCells()[1].GetFloat(), test_db.RowCells()[2].GetUint32(), test_db.RowCells()[3].GetUint32(), test_db.RowCells()[4].GetString());
+        }
+    }
+}
 
 
 // Основная программа
@@ -66,29 +87,13 @@ int main(void)
 
     printf("Reading total...\r\n\r\n");
 
-    test_db.Select();
-
-    printf("Selected row count: %d\r\n", test_db.GetSelectedRowCount());
-
-    for (uint32_t i = 0; i < test_db.GetSelectedRowCount(); i++)
-    {
-        if (test_db.ReadSelectedRow(i) == -1)
-        {
-            printf("Failed to read row\r\n");
-        }
-        else
-        {
-            printf("Row values: %02d/%02d/%02d %02d:%02d:%02d   %2.4f, %d, %d, %s\r\n", test_db.RowCells()[0].GetDateTime().SDate.Date, test_db.RowCells()[0].GetDateTime().SDate.Month, test_db.RowCells()[0].GetDateTime().SDate.Year,
-                    test_db.RowCells()[0].GetDateTime().STime.Hours, test_db.RowCells()[0].GetDateTime().STime.Minutes, test_db.RowCells()[0].GetDateTime().STime.Seconds,
-                    test_db.RowCells()[1].GetFloat(), test_db.RowCells()[2].GetUint32(), test_db.RowCells()[3].GetUint32(), test_db.RowCells()[4].GetString());
-        }
-    }
+   
 
 
     while(1)
     {
 
-        sleep(5);
+        sleep(3);
         // Пример записи значений
         timer = time(NULL);
 		u = localtime(&timer);
@@ -114,6 +119,10 @@ int main(void)
         {
             printf("Failed to write row\r\n");
         }
+
+        printf("\r\n");
+        ReadAllRows();
+        printf("\r\n");
 
     }
 
