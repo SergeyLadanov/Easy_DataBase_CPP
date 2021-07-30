@@ -1,7 +1,7 @@
 #include "easy_db.hpp"
 
 
-#define DEBUG_EDB 1
+#define DEBUG_EDB 0
 
 // Загрузка инфомации о БД
 int8_t EasyDataBase::Init(void)
@@ -227,8 +227,9 @@ int8_t EasyDataBase::Select(void)
             }
 
             SelectedRowCount++;
-
+            #if DEBUG_EDB != 0
             printf("Read selectid in select:%d\r\n", Row.RecordId);
+            #endif
 
             if (first_iteration)
             {
@@ -243,11 +244,11 @@ int8_t EasyDataBase::Select(void)
                 {
                     if (((id_bkp + 1) % (2 * Capacity)) != Row.RecordId)
                     {
+                        #if DEBUG_EDB != 0
                         printf("Founed!\r\n");
-
-                        
                         printf("Previous Id: %d\r\n", id_bkp);
                         printf("New id: %d\r\n", Row.RecordId);
+                        #endif
 
                         SelectedMaxIndex = i - 1;
                         SelectedMinIndex = i;
@@ -255,10 +256,12 @@ int8_t EasyDataBase::Select(void)
                         SelectedMinId = Row.RecordId;
                         founded = true;
 
+                        #if DEBUG_EDB != 0
                         printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
                         printf("Found MinIndex: %d\r\n", SelectedMinIndex);
                         printf("Found MaxId: %d\r\n", SelectedMaxId);
                         printf("Found MinId: %d\r\n", SelectedMinId);
+                        #endif
                         
                     }
                     else
@@ -270,17 +273,6 @@ int8_t EasyDataBase::Select(void)
                 }
             }
 
-            // if (Row.RecordId > SelectedMaxId)
-            // {
-            //     SelectedMaxIndex = i;
-            //     SelectedMaxId = Row.RecordId;
-            // }
-
-            // if (Row.RecordId < SelectedMinId)
-            // {
-            //     SelectedMinIndex = i;
-            //     SelectedMinId = Row.RecordId;
-            // }
         }
 
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
@@ -296,7 +288,8 @@ int8_t EasyDataBase::Select(void)
 
 
     }
-
+    
+    #if DEBUG_EDB != 0
     printf("\r\n------------Reuslt-----------\r\n\r\n");
 
     printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
@@ -305,6 +298,7 @@ int8_t EasyDataBase::Select(void)
     printf("Found MinId: %d\r\n", SelectedMinId);
 
     printf("\r\n------------------------------\r\n");
+    #endif
 
     delete[] readBuffer;
 
@@ -408,11 +402,11 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
                     {
                         if (((id_bkp + 1) % (2 * Capacity)) != Row.RecordId)
                         {
+                            #if DEBUG_EDB != 0
                             printf("Founed!\r\n");
-
-                            
                             printf("Previous Id: %d\r\n", id_bkp);
                             printf("New id: %d\r\n", Row.RecordId);
+                            #endif
 
                             SelectedMaxIndex = i - 1;
                             SelectedMinIndex = i;
@@ -420,10 +414,12 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
                             SelectedMinId = Row.RecordId;
                             founded = true;
 
+                            #if DEBUG_EDB != 0
                             printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
                             printf("Found MinIndex: %d\r\n", SelectedMinIndex);
                             printf("Found MaxId: %d\r\n", SelectedMaxId);
                             printf("Found MinId: %d\r\n", SelectedMinId);
+                            #endif
                             
                         }
                         else
@@ -650,8 +646,10 @@ int8_t EasyDataBase::WriteRow(void)
     if (status == 0)
     {
 
+        #if DEBUG_EDB != 0
         printf("Writed Id: %d\r\n", RecordId);
         printf("Writed Index: %d\r\n", WriteIndex);
+        #endif
 		WriteIndex = (WriteIndex + 1) % Capacity;
 		RecordId = (RecordId + 1) % (Capacity * 2);
     }

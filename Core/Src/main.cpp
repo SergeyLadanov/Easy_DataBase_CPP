@@ -11,6 +11,8 @@ EasyDataBase test_db("Test", test_row, EDB_CELL_ARRAY_LEN(test_row), 5);
 
 void ReadAllRows(void)
 {
+    printf("Reading total...\r\n\r\n");
+    
     test_db.Select();
 
     printf("Selected row count: %d\r\n", test_db.GetSelectedRowCount());
@@ -82,12 +84,6 @@ int main(void)
                     test_db.RowCells()[1].GetFloat(), test_db.RowCells()[2].GetUint32(), test_db.RowCells()[3].GetUint32(), test_db.RowCells()[4].GetString());
         }
     }
-
-
-
-    printf("Reading total...\r\n\r\n");
-
-   
 
 
     while(1)
