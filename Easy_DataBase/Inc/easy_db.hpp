@@ -80,6 +80,11 @@ public:
     		return -1;
     	}
 
+    	if (GetSelectedRowCount() == 0)
+    	{
+    		return -1;
+    	}
+
     	return ReadSelectedRow(0);
     }
 
@@ -87,6 +92,11 @@ public:
     int8_t ReadLastRow(void)
     {
     	if (Select() == -1)
+    	{
+    		return -1;
+    	}
+
+    	if (GetSelectedRowCount() == 0)
     	{
     		return -1;
     	}
