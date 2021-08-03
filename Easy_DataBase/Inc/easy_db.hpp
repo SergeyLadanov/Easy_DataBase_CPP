@@ -85,7 +85,7 @@ public:
     		return -1;
     	}
 
-    	return ReadSelectedRow(0);
+    	return ReadFirstSelectedRow();
     }
 
     // Чтение последней строки БД
@@ -101,6 +101,18 @@ public:
     		return -1;
     	}
 
+    	return ReadLastSelectedRow();
+    }
+
+    // Чтение первой выделенной строки БД
+    int8_t ReadFirstSelectedRow(void)
+    {
+    	return ReadSelectedRow(0);
+    }
+
+    // Чтение последней выделенной строки БД
+    int8_t ReadLastSelectedRow(void)
+    {
     	return ReadSelectedRow(GetSelectedRowCount() - 1);
     }
 
