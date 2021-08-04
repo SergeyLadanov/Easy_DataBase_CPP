@@ -1,7 +1,7 @@
 #include "easy_db.hpp"
 
 
-#define DEBUG_EDB 0
+#define DEBUG_EDB 1
 
 // Загрузка инфомации о БД
 int8_t EasyDataBase::Init(void)
@@ -500,27 +500,40 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 			printf("Failed to open file for reading row\r\n");
 			#endif
 			status = -1;
-			break;
         }
-
-        if (f_lseek(File, Row.Size() * memIndex) != FR_OK)
-        {
-			#if DEBUG_EDB != 0
-			printf("Failed to seek file\r\n");
-			#endif
-			status = -1;
-			break;
-        }
-
-		if (f_read(File, readBuffer, Row.Size(), (UINT *) &read_bytes) != FR_OK)
+		else
 		{
-			status = -1;
-			break;
-		}
 
-		f_close(File);
+			if (f_lseek(File, Row.Size() * memIndex) != FR_OK)
+			{
+				#if DEBUG_EDB != 0
+				printf("Failed to seek file\r\n");
+				#endif
+				status = -1;
+			}
+
+			if (f_read(File, readBuffer, Row.Size(), (UINT *) &read_bytes) != FR_OK)
+			{
+				#if DEBUG_EDB != 0
+				printf("Failed to read bytes from file\r\n");
+				#endif
+				status = -1;
+			}
+
+			if (f_close(File) != FR_OK)
+			{
+				#if DEBUG_EDB != 0
+				printf("Failed to close file in reading\r\n");
+				#endif
+			}
+        }
 
         delete File;
+
+        if (status == -1)
+        {
+        	break;
+        }
         #endif
 
         if (read_bytes != Row.Size())
@@ -637,7 +650,12 @@ int8_t EasyDataBase::WriteRow(void)
         	}
         }
 
-        f_close(File);
+        if (f_close(File) != FR_OK)
+        {
+			#if DEBUG_EDB != 0
+			printf("Error of closing file in writing data\r\n");
+			#endif
+        }
     }
 
     delete File;
