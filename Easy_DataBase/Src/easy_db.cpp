@@ -1,7 +1,7 @@
 #include "easy_db.hpp"
 
 
-#define DEBUG_EDB 1
+#define DEBUG_EDB 0
 
 // Загрузка инфомации о БД
 int8_t EasyDataBase::Init(void)
