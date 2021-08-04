@@ -276,12 +276,20 @@ int8_t EasyDataBase::Select(void)
         }
 
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
-        fclose(File);
+        if (fclose(File))
+        {
+            #if DEBUG_EDB != 0
+            printf("Failed to close file in selecting!\r\n");
+            #endif
+        }
         #endif
 
 		#if defined(__arm__)
 
-        f_close(File);
+        if (f_close(File) != FR_OK)
+        {
+            printf("Failed to close file in selecting!\r\n");
+        }
         delete File;
 
 		#endif
@@ -436,12 +444,20 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
         }
 
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
-        fclose(File);
+        if (fclose(File))
+        {
+            #if DEBUG_EDB != 0
+            printf("Failed to close file in selecting!\r\n");
+            #endif
+        }
         #endif
 
 		#if defined(__arm__)
 
-		f_close(File);
+		if (f_close(File) != FR_OK)
+        {
+            printf("Failed to close file in selecting!\r\n");
+        }
 		delete File;
 
 		#endif
@@ -480,14 +496,31 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
             printf("Failed to open file for reading row\r\n");
             #endif
             status = -1;
-            break;
         }
+        else
+        {
 
-        fseek(File, Row.Size() * memIndex, SEEK_SET);
+            if (fseek(File, Row.Size() * memIndex, SEEK_SET))
+            {
+                #if DEBUG_EDB != 0
+				printf("Failed to seek file\r\n");
+				#endif
+                status = -1;
+            }
+            else
+            {
+                read_bytes = fread(readBuffer, sizeof(uint8_t), Row.Size(), File);
+            }
 
-        read_bytes = fread(readBuffer, sizeof(uint8_t), Row.Size(), File);
+            
 
-        fclose(File);
+            if (fclose(File))
+            {
+                #if DEBUG_EDB != 0
+				printf("Failed to close file in reading\r\n");
+				#endif
+            }
+        }
 
         #endif
 
@@ -511,14 +544,18 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 				#endif
 				status = -1;
 			}
+            else
+            {
+                if (f_read(File, readBuffer, Row.Size(), (UINT *) &read_bytes) != FR_OK)
+                {
+                    #if DEBUG_EDB != 0
+                    printf("Failed to read bytes from file\r\n");
+                    #endif
+                    status = -1;
+                }
+            }
 
-			if (f_read(File, readBuffer, Row.Size(), (UINT *) &read_bytes) != FR_OK)
-			{
-				#if DEBUG_EDB != 0
-				printf("Failed to read bytes from file\r\n");
-				#endif
-				status = -1;
-			}
+
 
 			if (f_close(File) != FR_OK)
 			{
@@ -530,11 +567,12 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         delete File;
 
+        #endif
+
         if (status == -1)
         {
         	break;
         }
-        #endif
 
         if (read_bytes != Row.Size())
         {
@@ -602,18 +640,24 @@ int8_t EasyDataBase::WriteRow(void)
     }
     else
     {
-		fseek(File, Row.Size() * WriteIndex, SEEK_SET);
-		write_bytes = fwrite(writeBuffer, sizeof(uint8_t), Row.Size(), File);
-
-		if (write_bytes != Row.Size())
-		{
-			#if DEBUG_EDB != 0
-			printf("Error of writing data\r\n");
+		if (fseek(File, Row.Size() * WriteIndex, SEEK_SET))
+        {
+            #if DEBUG_EDB != 0
+			printf("Failed to seek file for writing\r\n");
 			#endif
-			status = -1;
-		}
+            status = -1;
+        }
+        else
+        {
+            write_bytes = fwrite(writeBuffer, sizeof(uint8_t), Row.Size(), File);
+        }
 
-		fclose(File);
+		if (fclose(File))
+        {
+            #if DEBUG_EDB != 0
+            printf("Failed to close file while writing\r\n");
+            #endif
+        }
     }
 
     #endif
@@ -660,6 +704,14 @@ int8_t EasyDataBase::WriteRow(void)
 
     delete File;
     #endif
+
+    if (write_bytes != Row.Size())
+    {
+        #if DEBUG_EDB != 0
+        printf("Error of writing data\r\n");
+        #endif
+        status = -1;
+    }
 
     if (status == 0)
     {
