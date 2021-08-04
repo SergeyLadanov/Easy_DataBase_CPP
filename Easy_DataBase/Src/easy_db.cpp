@@ -6,7 +6,7 @@
 // Загрузка инфомации о БД
 int8_t EasyDataBase::Init(void)
 {
-
+    int8_t status = 0;
     // Создание
     #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
     FILE *File;
@@ -24,12 +24,16 @@ int8_t EasyDataBase::Init(void)
         }
     }
 
-    fclose(File);
+    if (fclose(File))
+    {
+        #if DEBUG_EDB != 0
+        printf("Failed to close file!\r\n");
+        #endif
+    }
 
     #endif
 
     #if defined(__arm__)
-    int8_t status = 0;
     FILINFO fno;
 
 
@@ -47,7 +51,12 @@ int8_t EasyDataBase::Init(void)
     	}
     	else
     	{
-    		f_close(File);
+    		if (f_close(File) != FR_OK)
+            {
+                #if DEBUG_EDB != 0
+                printf("Failed to close file!\r\n");
+                #endif
+            }
     	}
 
 
@@ -65,7 +74,7 @@ int8_t EasyDataBase::Init(void)
     Enabled = true;
 
 
-    Select();
+    status = Select();
 
     if (SelectedRowCount > 0)
     {
@@ -74,7 +83,7 @@ int8_t EasyDataBase::Init(void)
     }
 
 
-    return 0;
+    return status;
 }
 
 // Очистка базы данных
@@ -92,11 +101,19 @@ int8_t EasyDataBase::Clear(void)
 	File = fopen(Name, "wb");
 	if (File == nullptr)
 	{
+        #if DEBUG_EDB != 0
+        printf("Failed to open file for clear\r\n");
+        #endif
 		status = -1;
 	}
 	else
 	{
-		fclose(File);
+		if (fclose(File))
+        {
+             #if DEBUG_EDB != 0
+             printf("Failed to close file for clear\r\n");
+             #endif
+        }
 	}
 
 	#endif
@@ -107,11 +124,19 @@ int8_t EasyDataBase::Clear(void)
 
 	if (f_open(File, Name, FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
 	{
+        #if DEBUG_EDB != 0
+        printf("Failed to open file for clear\r\n");
+        #endif
 		status = -1;
 	}
 	else
 	{
-		f_close(File);
+		if (f_close(File) != FR_OK)
+        {
+            #if DEBUG_EDB != 0
+            printf("Failed to close file for clear\r\n");
+            #endif
+        }
 	}
 
 	delete File;
@@ -288,7 +313,9 @@ int8_t EasyDataBase::Select(void)
 
         if (f_close(File) != FR_OK)
         {
+            #if DEBUG_EDB != 0
             printf("Failed to close file in selecting!\r\n");
+            #endif
         }
         delete File;
 
@@ -456,7 +483,9 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
 		if (f_close(File) != FR_OK)
         {
+            #if DEBUG_EDB != 0
             printf("Failed to close file in selecting!\r\n");
+            #endif
         }
 		delete File;
 
