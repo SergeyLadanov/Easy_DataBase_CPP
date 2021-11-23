@@ -1,7 +1,13 @@
 #include "easy_db.hpp"
 
 
-#define DEBUG_EDB 0
+#if USE_DEBUG_EDB != 0
+#include "debug_log.h"
+#define EDB_LOG(...) DEBUG_LOG(__VA_ARGS__)
+#else
+#define EDB_LOG(...)
+#endif
+
 
 // Загрузка инфомации о БД
 int8_t EasyDataBase::Init(void)
@@ -43,20 +49,27 @@ int8_t EasyDataBase::Init(void)
 
     	if (f_open(File, Name, FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
     	{
-			#if DEBUG_EDB != 0
-			printf("Failed to create easy database file\r\n");
-			#endif
+
+    		EDB_LOG("Failed to create easy database file\r\n");
+
 			status = -1;
 
     	}
     	else
     	{
-    		if (f_close(File) != FR_OK)
+            int tries = 5;
+            FRESULT fres = FR_OK;
+            do
             {
-                #if DEBUG_EDB != 0
-                printf("Failed to close file!\r\n");
-                #endif
+                fres = f_close(File);
+                if (tries-- <= 0)
+                {
+                	EDB_LOG("Failed to close file!\r\n");
+                	status = -1;
+                	break;
+                }
             }
+            while(fres != FR_OK);
     	}
 
 
@@ -101,18 +114,14 @@ int8_t EasyDataBase::Clear(void)
 	File = fopen(Name, "wb");
 	if (File == nullptr)
 	{
-        #if DEBUG_EDB != 0
-        printf("Failed to open file for clear\r\n");
-        #endif
+		EDB_LOG("Failed to open file for clear\r\n");
 		status = -1;
 	}
 	else
 	{
 		if (fclose(File))
         {
-             #if DEBUG_EDB != 0
-             printf("Failed to close file for clear\r\n");
-             #endif
+			EDB_LOG("Failed to close file for clear\r\n");
         }
 	}
 
@@ -124,19 +133,24 @@ int8_t EasyDataBase::Clear(void)
 
 	if (f_open(File, Name, FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
 	{
-        #if DEBUG_EDB != 0
-        printf("Failed to open file for clear\r\n");
-        #endif
+		EDB_LOG("Failed to open file for clear\r\n");
 		status = -1;
 	}
 	else
 	{
-		if (f_close(File) != FR_OK)
+        int tries = 5;
+        FRESULT fres = FR_OK;
+        do
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to close file for clear\r\n");
-            #endif
+            fres = f_close(File);
+            if (tries-- <= 0)
+            {
+            	EDB_LOG("Failed to close file for clear\r\n");
+            	status = -1;
+            	break;
+            }
         }
+        while(fres != FR_OK);
 	}
 
 	delete File;
@@ -200,9 +214,7 @@ int8_t EasyDataBase::Select(void)
 
     if (File == nullptr)
     {
-        #if DEBUG_EDB != 0
-        printf("Failed to open file for selecting\r\n");
-        #endif
+    	EDB_LOG("Failed to open file for selecting\r\n");
         status = -1;
     }
     #endif
@@ -212,9 +224,7 @@ int8_t EasyDataBase::Select(void)
 
     if (f_open(File, Name, FA_READ) != FR_OK)
     {
-		#if DEBUG_EDB != 0
-		printf("Failed to open file for selecting\r\n");
-		#endif
+    	EDB_LOG("Failed to open file for selecting\r\n");
 
 		status = -1;
     }
@@ -245,16 +255,12 @@ int8_t EasyDataBase::Select(void)
 
             if (Row.DeSerialize(readBuffer) != Row.Size())
             {
-                #if DEBUG_EDB != 0
-                printf("Record checksum error\r\n");
-                #endif
+            	EDB_LOG("Record checksum error\r\n");
                 continue;
             }
 
             SelectedRowCount++;
-            #if DEBUG_EDB != 0
-            printf("Read selectid in select:%d\r\n", Row.RecordId);
-            #endif
+            EDB_LOG("Read selectid in select:%d\r\n", (int) Row.RecordId);
 
             if (first_iteration)
             {
@@ -269,11 +275,11 @@ int8_t EasyDataBase::Select(void)
                 {
                     if (((id_bkp + 1) % (2 * Capacity)) != Row.RecordId)
                     {
-                        #if DEBUG_EDB != 0
-                        printf("Founed!\r\n");
-                        printf("Previous Id: %d\r\n", id_bkp);
-                        printf("New id: %d\r\n", Row.RecordId);
-                        #endif
+
+                    	EDB_LOG("Founed!\r\n");
+                    	EDB_LOG("Previous Id: %d\r\n", (int) id_bkp);
+                    	EDB_LOG("New id: %d\r\n", (int) Row.RecordId);
+
 
                         SelectedMaxIndex = i - 1;
                         SelectedMinIndex = i;
@@ -281,12 +287,10 @@ int8_t EasyDataBase::Select(void)
                         SelectedMinId = Row.RecordId;
                         founded = true;
 
-                        #if DEBUG_EDB != 0
-                        printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
-                        printf("Found MinIndex: %d\r\n", SelectedMinIndex);
-                        printf("Found MaxId: %d\r\n", SelectedMaxId);
-                        printf("Found MinId: %d\r\n", SelectedMinId);
-                        #endif
+                        EDB_LOG("Found MaxIndex: %d\r\n", (int) SelectedMaxIndex);
+                        EDB_LOG("Found MinIndex: %d\r\n", (int) SelectedMinIndex);
+                        EDB_LOG("Found MaxId: %d\r\n", (int) SelectedMaxId);
+                        EDB_LOG("Found MinId: %d\r\n", (int) SelectedMinId);
                         
                     }
                     else
@@ -303,20 +307,26 @@ int8_t EasyDataBase::Select(void)
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
         if (fclose(File))
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to close file in selecting!\r\n");
-            #endif
+        	EDB_LOG("Failed to close file in selecting!\r\n");
         }
         #endif
 
 		#if defined(__arm__)
 
-        if (f_close(File) != FR_OK)
+        int tries = 5;
+        FRESULT fres = FR_OK;
+        do
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to close file in selecting!\r\n");
-            #endif
+            fres = f_close(File);
+            if (tries-- <= 0)
+            {
+            	EDB_LOG("Failed to close file in selecting!\r\n");
+            	status = -1;
+            	break;
+            }
         }
+        while(fres != FR_OK);
+
         delete File;
 
 		#endif
@@ -324,16 +334,15 @@ int8_t EasyDataBase::Select(void)
 
     }
     
-    #if DEBUG_EDB != 0
-    printf("\r\n------------Reuslt-----------\r\n\r\n");
+    EDB_LOG("\r\n------------Reuslt-----------\r\n\r\n");
 
-    printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
-    printf("Found MinIndex: %d\r\n", SelectedMinIndex);
-    printf("Found MaxId: %d\r\n", SelectedMaxId);
-    printf("Found MinId: %d\r\n", SelectedMinId);
+    EDB_LOG("Found MaxIndex: %d\r\n", (int) SelectedMaxIndex);
+    EDB_LOG("Found MinIndex: %d\r\n", (int) SelectedMinIndex);
+    EDB_LOG("Found MaxId: %d\r\n", (int) SelectedMaxId);
+    EDB_LOG("Found MinId: %d\r\n", (int) SelectedMinId);
 
-    printf("\r\n------------------------------\r\n");
-    #endif
+    EDB_LOG("\r\n------------------------------\r\n");
+
 
     delete[] readBuffer;
 
@@ -368,9 +377,7 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
     if (File == nullptr)
     {
-        #if DEBUG_EDB != 0
-        printf("Failed to open file for selecting\r\n");
-        #endif
+    	EDB_LOG("Failed to open file for selecting\r\n");
         status = -1;
     }
     #endif
@@ -380,9 +387,7 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
     if (f_open(File, Name, FA_READ) != FR_OK)
     {
-		#if DEBUG_EDB != 0
-		printf("Failed to open file for selecting\r\n");
-		#endif
+    	EDB_LOG("Failed to open file for selecting\r\n");
 
 		status = -1;
     }
@@ -413,9 +418,7 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
 
             if (Row.DeSerialize(readBuffer) != Row.Size())
             {
-                #if DEBUG_EDB != 0
-                printf("Record checksum error\r\n");
-                #endif
+            	EDB_LOG("Record checksum error\r\n");
                 continue;
             }
 
@@ -437,11 +440,9 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
                     {
                         if (((id_bkp + 1) % (2 * Capacity)) != Row.RecordId)
                         {
-                            #if DEBUG_EDB != 0
-                            printf("Founed!\r\n");
-                            printf("Previous Id: %d\r\n", id_bkp);
-                            printf("New id: %d\r\n", Row.RecordId);
-                            #endif
+                        	EDB_LOG("Founed!\r\n");
+                        	EDB_LOG("Previous Id: %d\r\n", (int) id_bkp);
+                        	EDB_LOG("New id: %d\r\n", (int) Row.RecordId);
 
                             SelectedMaxIndex = i - 1;
                             SelectedMinIndex = i;
@@ -449,12 +450,12 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
                             SelectedMinId = Row.RecordId;
                             founded = true;
 
-                            #if DEBUG_EDB != 0
-                            printf("Found MaxIndex: %d\r\n", SelectedMaxIndex);
-                            printf("Found MinIndex: %d\r\n", SelectedMinIndex);
-                            printf("Found MaxId: %d\r\n", SelectedMaxId);
-                            printf("Found MinId: %d\r\n", SelectedMinId);
-                            #endif
+
+                            EDB_LOG("Found MaxIndex: %d\r\n", (int) SelectedMaxIndex);
+                            EDB_LOG("Found MinIndex: %d\r\n", (int) SelectedMinIndex);
+                            EDB_LOG("Found MaxId: %d\r\n", (int) SelectedMaxId);
+                            EDB_LOG("Found MinId: %d\r\n", (int) SelectedMinId);
+
                             
                         }
                         else
@@ -473,20 +474,26 @@ int8_t EasyDataBase::Select(Easy_DB_DateTime *start, Easy_DB_DateTime *end, uint
         #if defined(_WIN32) || defined(_WIN64) || defined(__linux__)
         if (fclose(File))
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to close file in selecting!\r\n");
-            #endif
+        	EDB_LOG("Failed to close file in selecting!\r\n");
         }
         #endif
 
 		#if defined(__arm__)
 
-		if (f_close(File) != FR_OK)
+        int tries = 5;
+        FRESULT fres = FR_OK;
+        do
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to close file in selecting!\r\n");
-            #endif
+            fres = f_close(File);
+            if (tries-- <= 0)
+            {
+            	EDB_LOG("Failed to close file in selecting!\r\n");
+            	status = -1;
+            	break;
+            }
         }
+        while(fres != FR_OK);
+
 		delete File;
 
 		#endif
@@ -521,9 +528,7 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         if (File == nullptr)
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to open file for reading row\r\n");
-            #endif
+        	EDB_LOG("Failed to open file for reading row\r\n");
             status = -1;
         }
         else
@@ -531,9 +536,7 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
             if (fseek(File, Row.Size() * memIndex, SEEK_SET))
             {
-                #if DEBUG_EDB != 0
-				printf("Failed to seek file\r\n");
-				#endif
+            	EDB_LOG("Failed to seek file\r\n");
                 status = -1;
             }
             else
@@ -545,9 +548,7 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
             if (fclose(File))
             {
-                #if DEBUG_EDB != 0
-				printf("Failed to close file in reading\r\n");
-				#endif
+            	EDB_LOG("Failed to close file in reading\r\n");
             }
         }
 
@@ -558,9 +559,7 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
         FIL *File = new FIL;
         if (f_open(File, Name, FA_READ) != FR_OK)
         {
-			#if DEBUG_EDB != 0
-			printf("Failed to open file for reading row\r\n");
-			#endif
+        	EDB_LOG("Failed to open file for reading row\r\n");
 			status = -1;
         }
 		else
@@ -568,30 +567,33 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
 			if (f_lseek(File, Row.Size() * memIndex) != FR_OK)
 			{
-				#if DEBUG_EDB != 0
-				printf("Failed to seek file\r\n");
-				#endif
+				EDB_LOG("Failed to seek file\r\n");
 				status = -1;
 			}
             else
             {
                 if (f_read(File, readBuffer, Row.Size(), (UINT *) &read_bytes) != FR_OK)
                 {
-                    #if DEBUG_EDB != 0
-                    printf("Failed to read bytes from file\r\n");
-                    #endif
+                	EDB_LOG("Failed to read bytes from file\r\n");
                     status = -1;
                 }
             }
 
 
+	        int tries = 5;
+	        FRESULT fres = FR_OK;
+	        do
+	        {
+	            fres = f_close(File);
+	            if (tries-- <= 0)
+	            {
+	            	EDB_LOG("Failed to close file in reading\r\n");
+	            	status = -1;
+	            	break;
+	            }
+	        }
+	        while(fres != FR_OK);
 
-			if (f_close(File) != FR_OK)
-			{
-				#if DEBUG_EDB != 0
-				printf("Failed to close file in reading\r\n");
-				#endif
-			}
         }
 
         delete File;
@@ -605,11 +607,9 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         if (read_bytes != Row.Size())
         {
-            #if DEBUG_EDB != 0
-            printf("Read bytes no match with rowsize!\r\n");
-            printf("Read bytes: %d\r\n", read_bytes);
-            printf("Row size: %d\r\n", Row.Size());
-            #endif
+        	EDB_LOG("Read bytes no match with rowsize!\r\n");
+        	EDB_LOG("Read bytes: %d\r\n", (int) read_bytes);
+        	EDB_LOG("Row size: %d\r\n", (int) Row.Size());
             status = -1;
             break;
         }
@@ -618,17 +618,13 @@ int8_t EasyDataBase::ReadSelectedRow(uint32_t index)
 
         if (Row.DeSerialize(readBuffer) != Row.Size())
         {
-            #if DEBUG_EDB != 0
-            printf("Record checksum error\r\n");
-            #endif
+        	EDB_LOG("Record checksum error\r\n");
             memIndex = (memIndex + 1) % Capacity;
             continue;
         }
         else
         {
-            #if DEBUG_EDB != 0
-            printf("Row id: %d\r\n", Row.RecordId);
-            #endif
+        	EDB_LOG("Row id: %d\r\n", (int) Row.RecordId);
             break;
         }
 
@@ -662,18 +658,14 @@ int8_t EasyDataBase::WriteRow(void)
 
     if (File == nullptr)
     {
-        #if DEBUG_EDB != 0
-        printf("Failed to open file for writing row\r\n");
-        #endif
+    	EDB_LOG("Failed to open file for writing row\r\n");
         status = -1;
     }
     else
     {
 		if (fseek(File, Row.Size() * WriteIndex, SEEK_SET))
         {
-            #if DEBUG_EDB != 0
-			printf("Failed to seek file for writing\r\n");
-			#endif
+			EDB_LOG("Failed to seek file for writing\r\n");
             status = -1;
         }
         else
@@ -683,9 +675,7 @@ int8_t EasyDataBase::WriteRow(void)
 
 		if (fclose(File))
         {
-            #if DEBUG_EDB != 0
-            printf("Failed to close file while writing\r\n");
-            #endif
+			EDB_LOG("Failed to close file while writing\r\n");
         }
     }
 
@@ -698,37 +688,40 @@ int8_t EasyDataBase::WriteRow(void)
 
     if (f_open(File, Name, FA_WRITE | FA_OPEN_EXISTING) != FR_OK)
     {
-		#if DEBUG_EDB != 0
-		printf("Failed to open file for writing row\r\n");
-		#endif
+    	EDB_LOG("Failed to open file for writing row\r\n");
 		status = -1;
     }
     else
     {
         if (f_lseek(File, Row.Size() * WriteIndex) != FR_OK)
         {
-    		#if DEBUG_EDB != 0
-    		printf("Failed to seek file\r\n");
-    		#endif
+        	EDB_LOG("Failed to seek file\r\n");
     		status = -1;
         }
         else
         {
         	if (f_write(File, writeBuffer, Row.Size(), (UINT *) &write_bytes) != FR_OK)
         	{
-				#if DEBUG_EDB != 0
-				printf("Error of writing data\r\n");
-				#endif
+        		EDB_LOG("Error of writing data\r\n");
 				status = -1;
         	}
         }
 
-        if (f_close(File) != FR_OK)
+
+        int tries = 5;
+        FRESULT fres = FR_OK;
+        do
         {
-			#if DEBUG_EDB != 0
-			printf("Error of closing file in writing data\r\n");
-			#endif
+            fres = f_close(File);
+            if (tries-- <= 0)
+            {
+            	EDB_LOG("Error of closing file in writing data\r\n");
+            	status = -1;
+            	break;
+            }
         }
+        while(fres != FR_OK);
+
     }
 
     delete File;
@@ -736,19 +729,16 @@ int8_t EasyDataBase::WriteRow(void)
 
     if (write_bytes != Row.Size())
     {
-        #if DEBUG_EDB != 0
-        printf("Error of writing data\r\n");
-        #endif
+    	EDB_LOG("Error of writing data\r\n");
         status = -1;
     }
 
     if (status == 0)
     {
 
-        #if DEBUG_EDB != 0
-        printf("Writed Id: %d\r\n", RecordId);
-        printf("Writed Index: %d\r\n", WriteIndex);
-        #endif
+    	EDB_LOG("Writed Id: %d\r\n", (int) RecordId);
+    	EDB_LOG("Writed Index: %d\r\n", (int) WriteIndex);
+
 		WriteIndex = (WriteIndex + 1) % Capacity;
 		RecordId = (RecordId + 1) % (Capacity * 2);
     }
